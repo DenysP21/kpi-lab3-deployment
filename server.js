@@ -29,8 +29,39 @@ const pool = mariadb.createPool({
   connectionLimit: 5,
 });
 
+function sendResponse(req, res, data, htmlFormatter) {
+  const accepts = req.accepts(["json", "html"]);
+  if (accepts === "html") {
+    res.type("html").send(htmlFormatter(data));
+  } else {
+    res.json(data);
+  }
+}
+
 app.get("/", (req, res) => {
-  res.send("Notes Service is running");
+  res.type("html").send(`
+        <h1>Notes Service API</h1>
+        <ul>
+            <li><a href="/notes">GET /notes</a> - Список нотаток</li>
+            <li>POST /notes - Створити нотатку (використовуйте форму на сторінці списку)</li>
+            <li>GET /notes/&lt;id&gt; - Переглянути конкретну нотатку</li>
+        </ul>
+    `);
+});
+
+app.get("/health/alive", (req, res) => {
+  res.status(200).send("OK");
+});
+
+app.get("/health/ready", async (req, res) => {
+  try {
+    const conn = await pool.getConnection();
+    await conn.ping();
+    conn.release();
+    res.status(200).send("OK");
+  } catch (err) {
+    res.status(500).send(`Database connection failed: ${err.message}`);
+  }
 });
 
 if (process.env.LISTEN_PID && parseInt(process.env.LISTEN_FDS, 10) > 0) {
