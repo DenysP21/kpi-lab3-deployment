@@ -18,13 +18,20 @@ create_user() {
     local username=$1
     local groups=$2
     if ! id -u "$username" >/dev/null 2>&1; then
-        useradd -m -s /bin/bash "$username"
+        if getent group "$username" >/dev/null 2>&1; then
+            useradd -m -s /bin/bash -g "$username" "$username"
+        else
+            useradd -m -s /bin/bash "$username"
+        fi
+        
         echo "$username:12345678" | chpasswd
-        chage -d 0 "$username" # Примушує змінити пароль при першому вході
+        chage -d 0 "$username"
         if [ ! -z "$groups" ]; then
             usermod -aG "$groups" "$username"
         fi
         echo "Користувача $username створено."
+    else
+        echo "Користувач $username вже існує, пропускаємо."
     fi
 }
 
