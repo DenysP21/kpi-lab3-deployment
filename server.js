@@ -121,12 +121,20 @@ app.post("/notes", async (req, res) => {
 });
 
 app.get("/notes/:id", async (req, res) => {
+  const noteId = parseInt(req.params.id, 10);
+
+  if (isNaN(noteId)) {
+    return res
+      .status(400)
+      .send("Некоректний запит: ID нотатки має бути числом");
+  }
+
   let conn;
   try {
     conn = await pool.getConnection();
     const rows = await conn.query(
       "SELECT id, title, content, created_at FROM notes WHERE id = ?",
-      [req.params.id],
+      [noteId],
     );
     if (rows.length === 0) return res.status(404).send("Нотатку не знайдено");
 
