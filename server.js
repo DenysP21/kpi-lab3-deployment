@@ -162,9 +162,7 @@ if (process.env.LISTEN_PID && parseInt(process.env.LISTEN_FDS, 10) > 0) {
     console.log("MyWebApp is running via systemd socket activation");
   });
 } else {
-  app.listen(config.port, "127.0.0.1", () => {
-    console.log(
-      `MyWebApp is running locally on http://127.0.0.1:${config.port}`,
-    );
+  app.listen(config.port, "0.0.0.0", () => {
+    console.log(`MyWebApp is running locally on http://0.0.0.0:${config.port}`);
   });
 }

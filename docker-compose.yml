@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  db:
+    image: mariadb:10.11
+    container_name: notes_db
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: rootpassword
+      MARIADB_DATABASE: notes_db
+      MARIADB_USER: app
+      MARIADB_PASSWORD: 12345678
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - notes_network
+
+  web:
+    build: .
+    container_name: notes_web
+    restart: unless-stopped
+    command: sh -c "node migrate.js --db-host=db && node server.js --db-host=db --port=8000"
+    depends_on:
+      - db
+    networks:
+      - notes_network
+
+  nginx:
+    image: nginx:alpine
+    container_name: notes_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - web
+    networks:
+      - notes_network
+
+networks:
+  notes_network:
+    driver: bridge
+
+volumes:
+  db_data:
