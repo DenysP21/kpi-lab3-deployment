@@ -157,12 +157,10 @@ app.get("/notes/:id", async (req, res) => {
   }
 });
 
-if (process.env.LISTEN_PID && parseInt(process.env.LISTEN_FDS, 10) > 0) {
-  app.listen({ fd: 3 }, () => {
-    console.log("MyWebApp is running via systemd socket activation");
-  });
-} else {
+if (require.main === module) {
   app.listen(config.port, "0.0.0.0", () => {
     console.log(`MyWebApp is running locally on http://0.0.0.0:${config.port}`);
   });
 }
+
+module.exports = app;
