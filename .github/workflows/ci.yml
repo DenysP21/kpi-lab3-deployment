@@ -93,10 +93,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Copy files to Target Node
-        # Використовуємо ssh/scp для передачі файлів, передаємо пароль 12345678 для sudo
+- name: Copy files to Target Node
         run: |
-          ssh -o StrictHostKeyChecking=no student@192.168.0.115 'echo "12345678" | sudo -S mkdir -p /opt/mywebapp && echo "12345678" | sudo -S chown student:student /opt/mywebapp'
+          ssh -o StrictHostKeyChecking=no student@192.168.0.115 'echo "12345678" | sudo -S mkdir -p /opt/mywebapp && echo "12345678" | sudo -S chown -R student:student /opt/mywebapp'
           scp -o StrictHostKeyChecking=no -r * student@192.168.0.115:/opt/mywebapp/
 
       - name: Run Deployment Script
