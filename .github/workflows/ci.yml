@@ -82,3 +82,36 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    name: Deploy to Target Node
+    needs: build-and-publish
+    # Запускаємо розгортання тільки у випадку коли створено анотований тег
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Copy files to Target Node
+        # Використовуємо ssh/scp для передачі файлів, передаємо пароль 12345678 для sudo
+        run: |
+          ssh -o StrictHostKeyChecking=no student@192.168.0.115 'echo "12345678" | sudo -S mkdir -p /opt/mywebapp && echo "12345678" | sudo -S chown student:student /opt/mywebapp'
+          scp -o StrictHostKeyChecking=no -r * student@192.168.0.115:/opt/mywebapp/
+
+      - name: Run Deployment Script
+        run: |
+          ssh -o StrictHostKeyChecking=no student@192.168.0.115 'cd /opt/mywebapp && chmod +x deploy-docker.sh && echo "12345678" | sudo -S ./deploy-docker.sh'
+
+  verify:
+    name: Verify Deployment
+    needs: deploy
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Verification Script
+        run: |
+          chmod +x verify.sh
+          ./verify.sh
