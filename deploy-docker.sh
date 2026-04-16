@@ -4,7 +4,7 @@ echo "=== Початок налаштування Target Node ==="
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -yq
-apt-get install -yq docker.io docker-compose curl
+apt-get install -yq docker.io docker-compose curl python3-setuptools
 
 echo "Зупинка старих сервісів (з першої лаби) та хостового Nginx..."
 systemctl stop mywebapp.service || true
