@@ -1,3 +1,4 @@
+#!/bin/bash
 # Зупиняємо скрипт при будь-якій помилці
 set -e
 
@@ -28,7 +29,7 @@ create_user() {
         
         echo "$username:12345678" | chpasswd
         chage -d 0 "$username"
-        if [ ! -z "$groups" ]; then
+        if [ -n "$groups" ]; then
             usermod -aG "$groups" "$username"
         fi
         echo "Користувача $username створено."
@@ -140,7 +141,7 @@ chown student:student /home/student/gradebook
 # 8. Блокування дефолтного користувача
 echo "[8/8] Блокування дефолтного користувача..."
 DEFAULT_USER=$(id -un 1000 2>/dev/null || echo "")
-if [ ! -z "$DEFAULT_USER" ] && [ "$DEFAULT_USER" != "student" ]; then
+if [ -n "$DEFAULT_USER" ] && [ "$DEFAULT_USER" != "student" ]; then
     usermod -L "$DEFAULT_USER"
     echo "Користувача $DEFAULT_USER заблоковано."
 fi
