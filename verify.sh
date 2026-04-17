@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "=== Перевірка доступності сервісу ==="
-HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://192.168.0.115/)
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://192.168.0.199/)
 
 if [ "$HTTP_CODE" -eq 200 ]; then
   echo "Сервіс доступний (HTTP 200)"
