@@ -98,12 +98,12 @@ jobs:
 
       - name: Copy files to Target Node
         run: |
-          ssh -o StrictHostKeyChecking=no student@192.168.0.115 'echo "12345678" | sudo -S mkdir -p /opt/mywebapp && echo "12345678" | sudo -S chown -R student:student /opt/mywebapp'
+          ssh -o StrictHostKeyChecking=no student@192.168.0.115 'echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S mkdir -p /opt/mywebapp && echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S chown -R student:student /opt/mywebapp'
           scp -o StrictHostKeyChecking=no -r * student@192.168.0.115:/opt/mywebapp/
 
       - name: Run Deployment Script
         run: |
-          ssh -o StrictHostKeyChecking=no student@192.168.0.115 'cd /opt/mywebapp && chmod +x deploy-docker.sh && echo "12345678" | sudo -S ./deploy-docker.sh'
+          ssh -o StrictHostKeyChecking=no student@192.168.0.115 'cd /opt/mywebapp && chmod +x deploy-docker.sh && echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S ./deploy-docker.sh'
 
   verify:
     name: Verify Deployment
