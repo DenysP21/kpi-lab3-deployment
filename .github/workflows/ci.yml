@@ -35,6 +35,9 @@ jobs:
         with:
           dockerfile: Dockerfile
 
+      - name: Run Shellcheck (Bash linter)
+        run: shellcheck *.sh
+
       - name: Run Tests with 40% Coverage Threshold
         run: npx jest --coverage --coverageThreshold='{"global":{"statements":40}}'
 
