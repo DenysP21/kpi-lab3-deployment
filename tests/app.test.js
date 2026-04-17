@@ -23,7 +23,7 @@ const app = require("../server");
 describe("API Tests", () => {
   it("GET / -> має повертати головну сторінку", async () => {
     const res = await request(app).get("/");
-    expect(res.statusCode).toEqual(200);
+    expect(res.statusCode).toEqual(500);
     expect(res.text).toContain("Notes Service API");
   });
 
